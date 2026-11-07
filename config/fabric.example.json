@@ -1,0 +1,4 @@
+{
+  "input_root": "/lakehouse/default/Files/dataops/source",
+  "output_root": "/lakehouse/default/Files/dataops/lakehouse"
+}
