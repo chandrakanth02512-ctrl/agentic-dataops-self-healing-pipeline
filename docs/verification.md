@@ -3,7 +3,43 @@
 Local evidence was collected in Codex Cloud on 7 November 2026. Source data is
 entirely fictional. No Fabric run or production throughput is claimed.
 
-## Local checks
+## Current cloud-deployment follow-up
+
+**Blocked: Phase 1 has not been fully completed or verified in Fabric.** All six
+connection variables are missing and the three required Microsoft hosts return
+proxy CONNECT 403 denials. Requirements are saved in the environment draft, not
+applied. No cloud writes or actual Fabric runs occurred. Follow the
+[secure configuration instructions](fabric-connection.md).
+
+Both local compatibility profiles completed all **41 tests** (0 failures,
+0 errors, 0 skips):
+
+| Local profile | Python / Spark / Delta | Result | Duration |
+| --- | --- | --- | --- |
+| Original | 3.12.14 / 4.0.5 / 4.0.0 | 41 passed | 342.90 s |
+| Runtime 2.0 compatibility | 3.13.5 / 4.1.1 / 4.2.0 | 41 passed | 333.96 s |
+
+The count includes the previous 31 cases plus 10 connection-safety/runtime-guard
+cases. A first Python 3.13 run had 24 failures because workers used Python 3.12
+from PATH; the local interpreter selection was corrected and the complete suite
+rerun successfully. No failures were skipped. Authentication tests use synthetic
+responses; they do not establish live token delivery, cloud access or execution.
+
+The base wheel has no unconditional dependencies and includes the Gold SQL, so
+installing application code will not pull a conflicting Spark/Delta version into
+Fabric. Repeatable compatibility setup and package dependency checks passed.
+The workflow now runs both full profiles on PR updates and main pushes. The live
+PR checks are authoritative for the newest commit; older run links below refer
+to the earlier implementation, not this follow-up.
+
+- [Current local runtime evidence](evidence/runtime-compatibility.json)
+- [Observed cloud blocker](evidence/fabric-blocker.json)
+- [Current PR checks](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/pull/1/checks)
+
+The earlier acceptance results and demo metrics below remain historical evidence
+for the unchanged pipeline business logic. They are not Fabric results.
+
+## Earlier local checks
 
 `python -m pytest -q --junitxml=build/test-results.xml` completed with **31 passed,
 0 failed, 0 errors, 0 skipped in 332.05 seconds**. Coverage was not measured.
@@ -61,7 +97,7 @@ The final demo has 19 Bronze order rows, 12 Silver events, 6 current orders
 
 The workflow installs the pinned dependencies, verifies Delta jars, runs the full
 suite, builds a wheel, checks the packaged SQL and uploads JUnit results. It runs
-on branch pushes and PR updates. Both remote runs for implementation commit `4cfcf6365c303d3caca3d2c5fe6ef1b695a99915`
+on main pushes and PR updates; the current workflow tests both local runtime profiles. Both remote runs for implementation commit `4cfcf6365c303d3caca3d2c5fe6ef1b695a99915`
 completed successfully: the [branch run](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/runs/42340972656)
 took 3m 19s and the [PR run](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/runs/42340978337)
 took 4m 00s. Conclusions were read from the public GitHub run pages. The exact
@@ -100,14 +136,14 @@ No approved cloud identity/connection, Fabric token binding, workspace ID or
 lakehouse ID is configured. Capacity, permissions and the workspace runtime have
 not been verified. The minimum next action is to connect an approved identity and
 identify an existing workspace/Lakehouse with usable capacity and native Spark
-4.0.x / Delta 4.0.x. See [the deployment guide](fabric.md). No paid service or
+4.1.x / Delta 4.2.x / Python 3.13. See [the deployment guide](fabric.md). No paid service or
 billing change was made.
 
 Phase 1's cloud clause permits an explicit Fabric blocker; it does not permit
-claiming completed cloud execution. All local implementation clauses and GitHub Actions checks for the pushed
-implementation are verified. Phase 1 meets the stated definition of done with
-Fabric explicitly blocked, as that definition allows; cloud execution itself
-remains incomplete.
+claiming completed cloud execution. The original local Phase 1 acceptance allowed an explicit Fabric blocker. The
+subsequent cloud-deployment request requires actual Fabric execution: that
+milestone is **blocked**, not fully completed or verified. Local compatibility
+and earlier GitHub Actions success do not satisfy cloud execution.
 
 The implementation intentionally requires one writer, immutable reference
 snapshots and source files no larger than 64 MiB. Gold is rebuilt from current

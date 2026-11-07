@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-11-07T10:47:37.388355+00:00",
+  "authentication": "blocked",
+  "deployment": "not attempted",
+  "actual_cloud_runs": 0,
+  "cloud_writes": 0,
+  "missing_runtime_variables": [
+    "FABRIC_TENANT_ID",
+    "FABRIC_CLIENT_ID",
+    "FABRIC_CLIENT_SECRET",
+    "FABRIC_WORKSPACE_ID",
+    "FABRIC_LAKEHOUSE_ID",
+    "FABRIC_ENVIRONMENT_ID"
+  ],
+  "network_probes": {
+    "login.microsoftonline.com": "Proxy CONNECT denied with HTTP 403",
+    "api.fabric.microsoft.com": "Proxy CONNECT denied with HTTP 403",
+    "onelake.dfs.fabric.microsoft.com": "Proxy CONNECT denied with HTTP 403"
+  },
+  "configuration": "Requirements and domain additions saved to draft; not applied to the running instance",
+  "live_client_credentials_exchange_verified": false,
+  "scope": "No cloud resources or workspace-wide settings changed"
+}

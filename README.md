@@ -38,8 +38,10 @@ reconciliation, schema evolution, storage paths and failure behavior.
 ## Set up in Codex Cloud or Linux
 
 The verified local versions are Python 3.12, Java 21, PySpark 4.0.5 and Delta 4.0.0.
-Java 17 or newer is required by Spark 4; CI uses 21. The direct Spark/Delta
-versions and development dependencies are pinned. Run from this checkout:
+Java 17 or newer is required by Spark 4; CI uses 21. The local Spark/Delta
+versions and development dependencies are pinned. A separate Python 3.13 / Spark
+4.1.1 / Delta 4.2.0 profile supports local Fabric Runtime 2.0 compatibility testing
+without changing this original profile; see [Fabric preparation](docs/fabric.md). Run from this checkout:
 
 ```bash
 bash scripts/setup_environment.sh
@@ -99,7 +101,9 @@ These are fictional demo amounts, not production performance or quality claims.
 ## Fabric and delivery
 
 [Fabric deployment instructions](docs/fabric.md) include the job entry point,
-configuration template, compatible runtime requirement and evidence checklist.
+configuration template, Runtime 2.0 compatibility requirement and evidence checklist.
+[Secure connection instructions](docs/fabric-connection.md) list the missing settings
+and network changes required before cloud authentication and deployment.
 They write Delta paths in OneLake Files; managed table registration and SQL
 analytics endpoint discovery are not claimed. No chargeable service is created.
 

@@ -1,39 +1,64 @@
 # Microsoft Fabric deployment preparation
 
-**Status: prepared, not deployed or verified in Fabric.** The Codex environment
-has no configured outbound cloud identity, Fabric token binding, workspace ID,
-lakehouse ID or capacity information. The identity manifest also has no
-connections. Local Delta evidence does not establish OneLake access or Fabric
-execution. No capacity, service or billing change has been provisioned.
+**Status: cloud deployment blocked; no authenticated Fabric execution.** The user
+identified existing resources: workspace **Fabric Lakehouse Platform**, Lakehouse
+**AgenticDataOps_Lakehouse**, Environment **AgenticDataOps_Environment**, and Entra
+application **AgenticDataOps_Codex**. The user reports Fabric API access and a
+Contributor grant. These permissions have not yet been verified from Codex.
 
-Minimum user action for a live run: provide an existing Fabric workspace backed
-by usable capacity, a Lakehouse, and an approved identity with permission to run
-Spark and read/write its OneLake files. Connect the identity through environment
-settings, not chat or GitHub. Supply the non-secret workspace/lakehouse identifiers
-and confirm the available Spark runtime. Capacity and permissions have not been
-verified; this is not a claim that the workspace does or does not have capacity.
-Do not create paid capacity as part of these instructions without approval.
+All six required settings are absent from the actual Codex process and environment
+bindings. The three required Microsoft hosts are denied by the applied outbound
+policy. The requirements and domain additions are saved in the environment draft.
+Follow [the exact secure connection steps](fabric-connection.md). No token, client
+secret, cloud write, paid resource or workspace-wide setting change is involved
+in the current local preparation. Never modify EnterpriseSalesLakehouse.
 
 ## Runtime and artifacts
 
-The tested local matrix is Python 3.12, Java 21, PySpark 4.0.5 and Delta 4.0.0.
-Delta 4.0's published Python dependency and Maven POM target Spark 4.0 / Scala 2.13.
-The Fabric job explicitly requires native Spark 4.0.x and Delta 4.0.x. A workspace
-that offers only Spark 3.x is a runtime blocker for this build; do not replace
-Fabric's bundled Spark/Delta packages with pip to make the check pass. A separate
-compatibility change and full test run would be required.
+Microsoft's [Runtime 2.0 documentation](https://learn.microsoft.com/en-us/fabric/data-engineering/runtime-2-0)
+confirms Spark 4.1, Delta 4.2, Python 3.13, Java 21 and Scala 2.13. The runtime guard
+requires those Spark/Delta/Python minor versions. It uses Fabric's native session;
+it does not install, override or reconfigure the workspace's runtime.
 
-Build the wheel locally:
+Two separate local dependency profiles preserve the existing developer workflow:
+
+| Profile | Python | PySpark | Delta | Lockfile |
+| --- | --- | --- | --- | --- |
+| Existing local | 3.12 | 4.0.5 | 4.0.0 | requirements-dev.lock |
+| Runtime 2.0 compatibility (local) | 3.13 | 4.1.1 | 4.2.0 | requirements-fabric.lock |
+
+Delta 4.2.0's published metadata restricts PySpark to `>=4.0.1,<=4.1.1`; do not
+substitute the latest 4.1 patch without reviewing compatibility. Local jar setup
+includes the Delta 4.2 kernel jars and verifies published Maven checksums. Local
+Spark workers use their driver's virtualenv interpreter. This setup is never
+called inside Fabric.
+
+In Codex, Python 3.13 and uv are available. Prepare and test the isolated profile:
 
 ```bash
-python -m pip wheel --no-deps --no-build-isolation . -w build/dist
+bash scripts/setup_fabric_compat.sh
+build/fabric-venv/bin/python -m pytest -q --junitxml=build/fabric-runtime-tests.xml
 ```
 
-Attach the wheel to an approved Fabric Environment compatible with its native
-runtime (install application code without resolving/replacing Spark or Delta).
+The standard `scripts/setup_environment.sh` and `.venv` keep the old profile.
+GitHub Actions tests both profiles. These are open-source local compatibility
+checks, not proof of Fabric's managed/native engine behavior or cloud execution.
+
+The base application wheel now has **no Spark or Delta dependency requirements**;
+local dependencies live in optional extras and lockfiles. Build it with:
+
+```bash
+.venv/bin/python -m pip wheel --no-deps --no-build-isolation . -w build/dist
+```
+
+After authentication and resource verification, attach this application wheel to
+the existing AgenticDataOps_Environment using supported Fabric library deployment,
+without installing any local-runtime extras or replacing built-in packages.
 The wheel includes the SQL resource. Add `fabric/run_batch.py` as the Spark Job
 Definition entry point, or call `run_pipeline` from a Python notebook cell using
-the Fabric-provided `spark` object.
+the Fabric-provided `spark` object. Environment publication, runtime, capacity,
+job creation and attachment all remain unverified until authenticated API reads
+and the actual run. Do not change workspace-wide settings as a workaround.
 
 ## Files and execution
 
