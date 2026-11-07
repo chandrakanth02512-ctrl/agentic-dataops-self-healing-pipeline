@@ -3,11 +3,13 @@ name: Python and Spark tests
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, feature/phase1-spark-pipeline]
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -15,12 +17,27 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.lock
       - name: Set up Java for Spark
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev]"
-      - name: Run tests
-        run: python -m pytest -q
+      - name: Install locked dependencies
+        run: |
+          python -m pip install -r requirements-dev.lock
+          python -m pip install --no-deps --no-build-isolation -e .
+          python scripts/setup_local_delta.py
+      - name: Run all tests, including real Delta MERGE
+        run: python -m pytest -q --junitxml=build/test-results.xml
+      - name: Build wheel and check packaged SQL
+        run: |
+          python -m pip wheel --no-deps --no-build-isolation . -w build/dist
+          python -c "import glob, zipfile; p=glob.glob('build/dist/*.whl')[0]; assert 'agentic_dataops/sql/daily_sales.sql' in zipfile.ZipFile(p).namelist()"
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/test-results.xml

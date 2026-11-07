@@ -1,0 +1,2 @@
+order_id,customer_id,product_id,quantity,unit_price,order_status,order_date,operation,event_time,sales_channel
+O011,C003,P1002,2,120.00,Placed,2026-11-04,I,2026-11-04T10:00:00,web
