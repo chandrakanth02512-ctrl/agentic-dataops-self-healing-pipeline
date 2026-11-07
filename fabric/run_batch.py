@@ -2,11 +2,11 @@
 
 import argparse
 import json
-from importlib.metadata import version
 
 from pyspark.sql import SparkSession
 
 from agentic_dataops.pipeline import run_pipeline
+from agentic_dataops.fabric_runtime import validate_fabric_runtime
 
 
 def main():
@@ -17,8 +17,8 @@ def main():
     with open(args.config) as handle:
         config = json.load(handle)
     spark = SparkSession.builder.getOrCreate()
-    if not spark.version.startswith('4.0.') or not version('delta-spark').startswith('4.0.'):
-        raise RuntimeError('This build requires native Spark 4.0.x and Delta 4.0.x; select a compatible Fabric runtime')
+    runtime = validate_fabric_runtime(spark)
+    print(json.dumps({'runtime': runtime}, sort_keys=True))
     source = config['input_root'].rstrip('/') + '/' + args.batch_id
     report = run_pipeline(spark, source, config['output_root'], 'delta', args.batch_id)
     print(json.dumps(report, sort_keys=True))
