@@ -32,6 +32,7 @@ Machine-readable evidence:
 - [Local test summary](evidence/local-tests.json)
 - [Demo reports](evidence/local-demo.json)
 - [Separate-process recovery](evidence/process-recovery.json)
+- [GitHub Actions conclusions](evidence/github-actions.json)
 
 The latter injected a failure after Gold in one Python/Spark process (exit 1),
 then recovered in a new process (exit 0). The event ledger remained at 6 rows and
@@ -60,8 +61,13 @@ The final demo has 19 Bronze order rows, 12 Silver events, 6 current orders
 
 The workflow installs the pinned dependencies, verifies Delta jars, runs the full
 suite, builds a wheel, checks the packaged SQL and uploads JUnit results. It runs
-on branch pushes and PR updates. Local results above are not a claim about a
-remote run: the authoritative result for a specific commit is its GitHub check.
+on branch pushes and PR updates. Both remote runs for implementation commit `4cfcf6365c303d3caca3d2c5fe6ef1b695a99915`
+completed successfully: the [branch run](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/runs/42340972656)
+took 3m 19s and the [PR run](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/runs/42340978337)
+took 4m 00s. Conclusions were read from the public GitHub run pages. The exact
+31-test count above comes from the local JUnit report; remote log-level counts
+were not independently extracted. This evidence-only documentation update does
+not alter application code or tests. Later commits have their own GitHub checks.
 
 - [Existing PR #1](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/pull/1)
 - [Workflow runs](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/workflows/tests.yml)
@@ -84,7 +90,7 @@ network change to be applied. No duplicate PR or merge is needed.
 | Failure/recovery and durable checkpoints | Verified, including a new Python/Spark process |
 | SQL and PySpark together | Verified by Gold revenue and packaged-resource checks |
 | Local tests | 31 passed; no skips |
-| GitHub Actions | Verify the successful check for the delivered commit using the links above |
+| GitHub Actions | Both implementation-commit runs passed; linked evidence above |
 | Reproducible documentation/demo | Commands executed locally; recorded counts above |
 | Fabric | Explicitly blocked, not deployed or executed; see below |
 
@@ -98,9 +104,10 @@ identify an existing workspace/Lakehouse with usable capacity and native Spark
 billing change was made.
 
 Phase 1's cloud clause permits an explicit Fabric blocker; it does not permit
-claiming completed cloud execution. All local implementation clauses are
-verified. Final delivery also depends on a successful GitHub Actions run for the
-pushed code.
+claiming completed cloud execution. All local implementation clauses and GitHub Actions checks for the pushed
+implementation are verified. Phase 1 meets the stated definition of done with
+Fabric explicitly blocked, as that definition allows; cloud execution itself
+remains incomplete.
 
 The implementation intentionally requires one writer, immutable reference
 snapshots and source files no larger than 64 MiB. Gold is rebuilt from current

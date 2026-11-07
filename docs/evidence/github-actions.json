@@ -1,0 +1,16 @@
+[
+  {
+    "run_id": "42340972656",
+    "status": "Success",
+    "duration": "3m 19s",
+    "url": "https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/runs/42340972656",
+    "commit": "4cfcf6365c303d3caca3d2c5fe6ef1b695a99915"
+  },
+  {
+    "run_id": "42340978337",
+    "status": "Success",
+    "duration": "4m 0s",
+    "url": "https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/runs/42340978337",
+    "commit": "4cfcf6365c303d3caca3d2c5fe6ef1b695a99915"
+  }
+]
