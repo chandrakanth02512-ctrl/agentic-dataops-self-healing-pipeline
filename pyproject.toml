@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-dataops"
+version = "0.1.0"
+description = "A data reliability pipeline with human-approved recovery"
+requires-python = ">=3.12"
+dependencies = [
+    "pyspark>=4.0,<4.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10"]
+
+[project.scripts]
+dataops-pipeline = "agentic_dataops.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
