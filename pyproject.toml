@@ -8,7 +8,8 @@ version = "0.1.0"
 description = "A data reliability pipeline with human-approved recovery"
 requires-python = ">=3.12"
 dependencies = [
-    "pyspark>=4.0,<4.1",
+    "pyspark==4.0.5",
+    "delta-spark==4.0.0",
 ]
 
 [project.optional-dependencies]
@@ -19,6 +20,9 @@ dataops-pipeline = "agentic_dataops.pipeline:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+agentic_dataops = ["sql/*.sql"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
