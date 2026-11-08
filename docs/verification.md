@@ -1,15 +1,114 @@
 # Phase 1 verification
 
-Local evidence was collected in Codex Cloud on 7 November 2026. Source data is
-entirely fictional. No Fabric run or production throughput is claimed.
+Local evidence was collected in Codex Cloud on 7 November 2026. The first actual
+Fabric batch was verified on 8 November 2026. Source data is entirely fictional;
+these small-batch results are not a production throughput benchmark.
 
 ## Current cloud-deployment follow-up
 
-**Blocked: Phase 1 has not been fully completed or verified in Fabric.** All six
-connection variables are missing and the three required Microsoft hosts return
-proxy CONNECT 403 denials. Requirements are saved in the environment draft, not
-applied. No cloud writes or actual Fabric runs occurred. Follow the
-[secure configuration instructions](fabric-connection.md).
+**PASS for Fabric batches `001_initial` and `002_changes`; batch
+`003_schema_addition` and recovery remain pending approval.** The published
+`agentic-dataops 0.1.0` wheel ran once per approved batch in
+`AgenticDataOps_Phase1_Run`, explicitly attached to `AgenticDataOps_Environment`
+and `AgenticDataOps_Lakehouse` in `Fabric Lakehouse Platform`. Runtime 2.0 reported
+Spark `4.1.1.5.5.20260929.238183312` and Python `3.13.11`. Delta Python distribution
+version metadata was unavailable; native Delta reads, writes and CDC MERGE succeeded.
+
+### Initial batch: `001_initial`
+
+- Notebook ID: `7dbe4ee8-eb8a-4aa8-81e9-612272d041e7`.
+- Fabric run ID: `7c0f15b0-77dc-468f-b6ab-ee49b97b11c4`; status `Completed`.
+- Application/audit run ID: `0116022f-29ac-4542-93f3-09139108c779`.
+- Total Fabric duration: **252.940 s**; pipeline call including checkpoint: **53.097 s**.
+- The audit report records **47.904 s**, measured before its final checkpoint write.
+
+| Initial-batch metric | Expected | Persisted actual |
+| --- | --- | --- |
+| Input orders | 10 | 10 |
+| Valid events | 6 | 6 |
+| Rejected orders | 4 | 4 |
+| Active orders | 3 | 3 |
+| Gold revenue | 1758.00 | 1758.00 |
+
+Both target directories were absent before writing, with no redirecting shortcuts.
+The original three CSV files were uploaded unchanged to
+`/lakehouse/default/Files/dataops/source/001_initial`. The output root is
+`/lakehouse/default/Files/dataops/lakehouse`. Both resolve to the dedicated
+Lakehouse; distributed Spark used their equivalent explicit OneLake ABFS paths.
+
+A fresh Spark SQL session read all eight committed Delta paths after the pipeline
+returned. Bronze contains 10 orders, 3 customers and 3 products; Silver contains
+6 events and 4 current orders, including one tombstone; Quarantine contains 4
+rows; Gold contains 3 rows. `audit/runs` contains exactly one `success` row at
+Delta version 1, matching the returned batch report. All reconciliation checks
+passed. Independent read-only OneLake checks after notebook completion confirmed
+the same commit versions and final checkpoint statistics.
+
+[Full Fabric evidence, original checksums, batch report and reconciliation](evidence/fabric-001-initial.json).
+That evidence records the initial run only and remains byte-for-byte unchanged.
+No recovery attempt, managed table registration, workspace settings change,
+Enterprise Sales access or PR merge was performed. The existing preflight
+notebook and published wheel were preserved.
+
+### Incremental CDC: `002_changes`
+
+The existing execution notebook was reused with one execution-cell update; its
+attachments and result-return cell were preserved. Before submission, read-only
+OneLake reads confirmed the initial success checkpoint, Gold revenue `1758.00`,
+and all initial Delta versions. No unfinished batch, active workspace Spark
+session, pending project execution, prior target submission, or existing
+`002_changes` source/data was found. The three uploaded CSV files matched the
+repository bytes and SHA-256 checksums; reference snapshots matched batch 001.
+
+- Fabric run ID: `d63390d6-b479-4238-9c86-d9b7eef004a9`; status `Completed`.
+- Application/audit run ID: `097b3035-5afe-412e-af5b-bb86ae61b4a9`.
+- Total Fabric duration: **293.545 s**; pipeline call including checkpoint: **57.654 s**.
+- Audit report duration: **53.250 s**, measured before its final checkpoint write.
+- After interruption, saved state and Fabric job history confirmed the existing
+  submission. No second execution, upload, or notebook update was issued.
+
+| CDC batch metric | Expected | Persisted actual |
+| --- | --- | --- |
+| Input orders | 8 | 8 |
+| Valid events | 5 | 5 |
+| Rejected orders | 3 | 3 |
+| Active orders | 3 | 3 |
+| Gold revenue | 3117.00 | 3117.00 |
+
+CDC verification passed: `O008` was inserted with quantity 2, `O001` updated to
+quantity 3, and `O002` became a tombstone. The late `O001` event remained in the
+ledger without rolling back current state. The late `O003` event did not revive
+its existing tombstone. Repeated `O007` was quarantined once as `duplicate_event`
+and retained one ledger event. The other rejections were `invalid_quantity` and
+`unknown_product`. Exact current state contains five orders: three active and
+two tombstones. Native Delta MERGE was confirmed in transaction history.
+
+| Persisted output | Cumulative rows | Delta version before → after |
+| --- | --- | --- |
+| `bronze/orders` | 18 | 0 → 1 |
+| `bronze/customers` | 6 | 0 → 1 |
+| `bronze/products` | 6 | 0 → 1 |
+| `silver/order_events` | 11 | 0 → 1 |
+| `silver/current_orders` | 5 | 0 → 1 |
+| `quarantine/orders` | 7 | 0 → 1 |
+| `gold/daily_sales` | 3 | 0 → 1 |
+| `audit/runs` | 2 | 1 → 3 |
+
+All reconciliation checks passed. There is exactly one success checkpoint for
+each approved batch; the initial checkpoint is unchanged. Native Spark verified
+the initial batch partitions and all initial time-travel snapshots. Independent
+OneLake reads confirmed audit/Gold values, logical row counts, commit versions,
+and unchanged original data-file checksums. For current Silver, Fabric used a
+deletion vector to mask two superseded rows; the independent reader accounts for
+that cardinality, while native Spark verifies the exact current-row selection.
+
+[Full CDC evidence, batch report, checksums, CDC checks and retention proof](evidence/fabric-002-changes.json).
+No execution errors or metric discrepancies occurred. No batch 003 or recovery
+test has been run. Source path:
+`/lakehouse/default/Files/dataops/source/002_changes`; output root remains
+`/lakehouse/default/Files/dataops/lakehouse` in `AgenticDataOps_Lakehouse`.
+
+## Local runtime compatibility evidence
 
 Both local compatibility profiles completed all **41 tests** (0 failures,
 0 errors, 0 skips):
@@ -33,7 +132,7 @@ PR checks are authoritative for the newest commit; older run links below refer
 to the earlier implementation, not this follow-up.
 
 - [Current local runtime evidence](evidence/runtime-compatibility.json)
-- [Observed cloud blocker](evidence/fabric-blocker.json)
+- [Historical cloud blocker, now resolved](evidence/fabric-blocker.json)
 - [Current PR checks](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/pull/1/checks)
 
 The earlier acceptance results and demo metrics below remain historical evidence
@@ -108,11 +207,9 @@ not alter application code or tests. Later commits have their own GitHub checks.
 - [Existing PR #1](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/pull/1)
 - [Workflow runs](https://github.com/chandrakanth02512-ctrl/agentic-dataops-self-healing-pipeline/actions/workflows/tests.yml)
 
-GitHub API access is currently denied by the environment's outbound policy.
-`api.github.com` has been added to the environment draft for review/save. Git
-transport and public GitHub run pages remain accessible, so commits can be pushed
-and run conclusions inspected there. PR title/body edits via the API require the
-network change to be applied. No duplicate PR or merge is needed.
+At the time of the earlier CI capture, GitHub API access was denied by the environment's outbound policy.
+That historical network blocker was resolved before the Fabric deployment work.
+The existing PR remains open; no duplicate PR or merge was created.
 
 ## Definition of done
 
@@ -125,25 +222,20 @@ network change to be applied. No duplicate PR or merge is needed.
 | Predictable schema failures and additions | Verified with fixtures and real Delta evolution |
 | Failure/recovery and durable checkpoints | Verified, including a new Python/Spark process |
 | SQL and PySpark together | Verified by Gold revenue and packaged-resource checks |
-| Local tests | 31 passed; no skips |
+| Local tests | Both current runtime profiles passed 41 tests; earlier 31-test evidence is historical |
 | GitHub Actions | Both implementation-commit runs passed; linked evidence above |
 | Reproducible documentation/demo | Commands executed locally; recorded counts above |
-| Fabric | Explicitly blocked, not deployed or executed; see below |
+| Fabric | Initial batch and incremental CDC executed and reconciled; batch 003 and recovery require approval |
 
-## Fabric blocker and limits
+## Fabric execution scope and limits
 
-No approved cloud identity/connection, Fabric token binding, workspace ID or
-lakehouse ID is configured. Capacity, permissions and the workspace runtime have
-not been verified. The minimum next action is to connect an approved identity and
-identify an existing workspace/Lakehouse with usable capacity and native Spark
-4.1.x / Delta 4.2.x / Python 3.13. See [the deployment guide](fabric.md). No paid service or
-billing change was made.
-
-Phase 1's cloud clause permits an explicit Fabric blocker; it does not permit
-claiming completed cloud execution. The original local Phase 1 acceptance allowed an explicit Fabric blocker. The
-subsequent cloud-deployment request requires actual Fabric execution: that
-milestone is **blocked**, not fully completed or verified. Local compatibility
-and earlier GitHub Actions success do not satisfy cloud execution.
+Authentication, the published application package, initial execution and
+incremental CDC are verified in the existing FTL4 trial capacity. This is evidence
+for `001_initial` and `002_changes` only. Batch `003_schema_addition`, replay,
+schema evolution, and failure/recovery have not yet been executed in Fabric. Their local evidence
+does not establish those remaining cloud milestones. Wait for explicit approval
+before running another batch or recovery attempt. No capacity, billing, role,
+or workspace-wide runtime setting was changed.
 
 The implementation intentionally requires one writer, immutable reference
 snapshots and source files no larger than 64 MiB. Gold is rebuilt from current

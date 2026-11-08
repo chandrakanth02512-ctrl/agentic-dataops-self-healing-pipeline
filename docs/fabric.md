@@ -1,17 +1,20 @@
 # Microsoft Fabric deployment preparation
 
-**Status: cloud deployment blocked; no authenticated Fabric execution.** The user
-identified existing resources: workspace **Fabric Lakehouse Platform**, Lakehouse
-**AgenticDataOps_Lakehouse**, Environment **AgenticDataOps_Environment**, and Entra
-application **AgenticDataOps_Codex**. The user reports Fabric API access and a
-Contributor grant. These permissions have not yet been verified from Codex.
+**Status: application package, initial batch and Fabric CDC verified.** The existing
+workspace **Fabric Lakehouse Platform**, Lakehouse **AgenticDataOps_Lakehouse**,
+Environment **AgenticDataOps_Environment**, and Entra application
+**AgenticDataOps_Codex** were used for the approved deployment. The published
+`agentic-dataops 0.1.0` wheel and fictional batches `001_initial` and `002_changes`
+passed actual Runtime 2.0 execution and persisted-output reconciliation. See
+[the recorded results](verification.md), [initial evidence](evidence/fabric-001-initial.json),
+and [CDC evidence](evidence/fabric-002-changes.json).
 
-All six required settings are absent from the actual Codex process and environment
-bindings. The three required Microsoft hosts are denied by the applied outbound
-policy. The requirements and domain additions are saved in the environment draft.
-Follow [the exact secure connection steps](fabric-connection.md). No token, client
-secret, cloud write, paid resource or workspace-wide setting change is involved
-in the current local preparation. Never modify EnterpriseSalesLakehouse.
+Only `001_initial` and `002_changes` have been executed, once each. Batch
+`003_schema_addition` and recovery tests require the user's next approval.
+The instructions below describe the broader workflow;
+they do not authorize additional execution. Never modify EnterpriseSalesLakehouse
+or workspace-wide settings. Use [the secure connection instructions](fabric-connection.md)
+when configuring a new environment; never put credentials in the repository.
 
 ## Runtime and artifacts
 
@@ -54,11 +57,13 @@ local dependencies live in optional extras and lockfiles. Build it with:
 After authentication and resource verification, attach this application wheel to
 the existing AgenticDataOps_Environment using supported Fabric library deployment,
 without installing any local-runtime extras or replacing built-in packages.
-The wheel includes the SQL resource. Add `fabric/run_batch.py` as the Spark Job
-Definition entry point, or call `run_pipeline` from a Python notebook cell using
-the Fabric-provided `spark` object. Environment publication, runtime, capacity,
-job creation and attachment all remain unverified until authenticated API reads
-and the actual run. Do not change workspace-wide settings as a workaround.
+The wheel includes the SQL resource. The verified execution notebook calls
+`run_pipeline` with Fabric's existing `spark` object and explicit OneLake ABFS
+paths. Environment publication, runtime, notebook attachments and execution were
+verified. The alternate `fabric/run_batch.py` entry point still requires review:
+its runtime guard looks up `delta-spark` distribution metadata, which was
+unavailable in the managed runtime. Do not install replacement runtime packages
+or change workspace-wide settings as a workaround.
 
 ## Files and execution
 
@@ -99,6 +104,7 @@ run_pipeline(spark, source_batch, output_root, "delta", "003_schema_addition", f
 run_pipeline(spark, source_batch, output_root, "delta", "003_schema_addition")
 ```
 
-Save a sanitized evidence report to `docs/verification.md` only after those steps
-actually execute. A successful local test, uploaded wheel or submitted cloud job
-alone does not establish a completed Fabric run.
+Record sanitized evidence for each approved step in `docs/verification.md` only
+after it actually executes. Label later unexecuted stages explicitly. A successful
+local test, uploaded wheel or submitted cloud job alone does not establish a
+completed Fabric run.
