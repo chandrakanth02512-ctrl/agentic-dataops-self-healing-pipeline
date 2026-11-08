@@ -518,5 +518,535 @@
     "no_workspace_settings_changes": true,
     "no_enterprise_sales_access": true,
     "pr_1_not_merged": true
+  },
+  "idempotency_replay": {
+    "scope": "One approved replay of the exact completed 002_changes batch ID and immutable source files. No uploads, package changes, later batches, or deliberate failure injection.",
+    "notebook_id": "7dbe4ee8-eb8a-4aa8-81e9-612272d041e7",
+    "notebook_name": "AgenticDataOps_Phase1_Run",
+    "fabric_run_id": "16e2ccdb-3231-403f-89be-aa005c22b565",
+    "fabric_execution_status": "Completed",
+    "timestamps_utc": {
+      "startTimeUtc": "2026-11-08T07:02:40.4456556",
+      "endTimeUtc": "2026-11-08T07:06:23.4005444"
+    },
+    "fabric_duration_seconds": 222.955,
+    "returned_pipeline_status": "already_processed",
+    "replay_pipeline_wall_seconds": 2.452,
+    "original_application_run_id": "097b3035-5afe-412e-af5b-bb86ae61b4a9",
+    "preconditions": {
+      "active_workspace_sessions": 0,
+      "unfinished_project_executions": 0,
+      "completed_project_executions": 2,
+      "success_checkpoints": 2,
+      "audit_rows": 2,
+      "gold_revenue": "3117.00",
+      "source_sha256": {
+        "customers.csv": "596b8da757582bd5ab8e69b223f3479570c33db5ad1f5bc42c874fe6516546aa",
+        "orders.csv": "64e727bd50182b839ddfa74ab52894ebfcf4c7f62b212289760d326c3a535be7",
+        "products.csv": "7448bd8827b429500648d23d14f5ffffee70af2c20f6c05c2173cfc85ec90214"
+      },
+      "environment_unchanged": true,
+      "baseline_versions": {
+        "bronze/orders": 1,
+        "bronze/customers": 1,
+        "bronze/products": 1,
+        "silver/order_events": 1,
+        "silver/current_orders": 1,
+        "quarantine/orders": 1,
+        "gold/daily_sales": 1,
+        "audit/runs": 3
+      },
+      "baseline_rows": {
+        "bronze/orders": 18,
+        "bronze/customers": 6,
+        "bronze/products": 6,
+        "silver/order_events": 11,
+        "silver/current_orders": 5,
+        "quarantine/orders": 7,
+        "gold/daily_sales": 3,
+        "audit/runs": 2
+      }
+    },
+    "runtime": "2.0",
+    "verification": {
+      "after": {
+        "audit/runs": {
+          "delta_version": 3,
+          "row_sha256": "2eba51af790397a1c3d2d8ab8970ec15f4d15fcead50172f6a15530e73688a8e",
+          "rows": 2
+        },
+        "bronze/customers": {
+          "delta_version": 1,
+          "row_sha256": "6f131fdf002a4280845abc418fb7197004b06a0e8e5586cdd8a18b3f5c361dda",
+          "rows": 6
+        },
+        "bronze/orders": {
+          "delta_version": 1,
+          "row_sha256": "f51b25a9b6734b0c503f6fc882749232eac7fe840ca100467afce6d5ba86384f",
+          "rows": 18
+        },
+        "bronze/products": {
+          "delta_version": 1,
+          "row_sha256": "27351349c661dd1af2e5c841090309ec92303dbebe5cb637442bc5389bba5da5",
+          "rows": 6
+        },
+        "gold/daily_sales": {
+          "delta_version": 1,
+          "row_sha256": "50c746c0c7a68487d961071888ddb7588ee327ec56f3475f3a0494c8bf853262",
+          "rows": 3
+        },
+        "quarantine/orders": {
+          "delta_version": 1,
+          "row_sha256": "bde541c11d8fdda27a3ade92e8c7cfec7109ef2d4b3237cf0e216a7cf266588a",
+          "rows": 7
+        },
+        "silver/current_orders": {
+          "delta_version": 1,
+          "row_sha256": "665d7b1ba3401553161362d390b5bc5d29d3927c926ec5d78a230e5f77ae0fc5",
+          "rows": 5
+        },
+        "silver/order_events": {
+          "delta_version": 1,
+          "row_sha256": "a192794f60dc67c2c4540cea51ff9994d24a98c6c87932964324fb9f10cbb3bc",
+          "rows": 11
+        }
+      },
+      "application_version": "0.1.0",
+      "attachments_verified": true,
+      "batch_id": "002_changes",
+      "batch_report": {
+        "active_before": 3,
+        "active_orders": 3,
+        "batch_id": "002_changes",
+        "completed_at": "2026-11-08T01:43:30.725948+00:00",
+        "duration_seconds": 53.25,
+        "events_after": 11,
+        "events_before": 6,
+        "failure_reason": "",
+        "gold_order_count": 3,
+        "gold_revenue": "3117.00",
+        "gold_rows": 3,
+        "input_fingerprint": "fee2cb49916cc432d12706de6d9ab259eb51922724264153a258d800ec325047",
+        "max_event_time": "2026-11-03 08:20:00",
+        "orders_after": 5,
+        "orders_before": 4,
+        "quarantined_rows": 3,
+        "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+        "run_id": "097b3035-5afe-412e-af5b-bb86ae61b4a9",
+        "source_rows": 8,
+        "started_at": "2026-11-08T01:42:37.475702+00:00",
+        "status": "already_processed",
+        "valid_events": 5
+      },
+      "before": {
+        "audit/runs": {
+          "delta_version": 3,
+          "row_sha256": "2eba51af790397a1c3d2d8ab8970ec15f4d15fcead50172f6a15530e73688a8e",
+          "rows": 2
+        },
+        "bronze/customers": {
+          "delta_version": 1,
+          "row_sha256": "6f131fdf002a4280845abc418fb7197004b06a0e8e5586cdd8a18b3f5c361dda",
+          "rows": 6
+        },
+        "bronze/orders": {
+          "delta_version": 1,
+          "row_sha256": "f51b25a9b6734b0c503f6fc882749232eac7fe840ca100467afce6d5ba86384f",
+          "rows": 18
+        },
+        "bronze/products": {
+          "delta_version": 1,
+          "row_sha256": "27351349c661dd1af2e5c841090309ec92303dbebe5cb637442bc5389bba5da5",
+          "rows": 6
+        },
+        "gold/daily_sales": {
+          "delta_version": 1,
+          "row_sha256": "50c746c0c7a68487d961071888ddb7588ee327ec56f3475f3a0494c8bf853262",
+          "rows": 3
+        },
+        "quarantine/orders": {
+          "delta_version": 1,
+          "row_sha256": "bde541c11d8fdda27a3ade92e8c7cfec7109ef2d4b3237cf0e216a7cf266588a",
+          "rows": 7
+        },
+        "silver/current_orders": {
+          "delta_version": 1,
+          "row_sha256": "665d7b1ba3401553161362d390b5bc5d29d3927c926ec5d78a230e5f77ae0fc5",
+          "rows": 5
+        },
+        "silver/order_events": {
+          "delta_version": 1,
+          "row_sha256": "a192794f60dc67c2c4540cea51ff9994d24a98c6c87932964324fb9f10cbb3bc",
+          "rows": 11
+        }
+      },
+      "checkpoints_after": [
+        {
+          "active_before": 0,
+          "active_orders": 3,
+          "batch_id": "001_initial",
+          "completed_at": "2026-11-08T01:13:51.700024+00:00",
+          "duration_seconds": 47.904,
+          "events_after": 6,
+          "events_before": 0,
+          "failure_reason": "",
+          "gold_order_count": 3,
+          "gold_revenue": "1758.00",
+          "gold_rows": 3,
+          "input_fingerprint": "6c3694b1e62d538339b179ab95eb96270a9a9b67d41150f53db01cb3e747ea27",
+          "max_event_time": "2026-11-02 10:00:00",
+          "orders_after": 4,
+          "orders_before": 0,
+          "quarantined_rows": 4,
+          "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+          "run_id": "0116022f-29ac-4542-93f3-09139108c779",
+          "source_rows": 10,
+          "started_at": "2026-11-08T01:13:03.795678+00:00",
+          "status": "success",
+          "valid_events": 6
+        },
+        {
+          "active_before": 3,
+          "active_orders": 3,
+          "batch_id": "002_changes",
+          "completed_at": "2026-11-08T01:43:30.725948+00:00",
+          "duration_seconds": 53.25,
+          "events_after": 11,
+          "events_before": 6,
+          "failure_reason": "",
+          "gold_order_count": 3,
+          "gold_revenue": "3117.00",
+          "gold_rows": 3,
+          "input_fingerprint": "fee2cb49916cc432d12706de6d9ab259eb51922724264153a258d800ec325047",
+          "max_event_time": "2026-11-03 08:20:00",
+          "orders_after": 5,
+          "orders_before": 4,
+          "quarantined_rows": 3,
+          "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+          "run_id": "097b3035-5afe-412e-af5b-bb86ae61b4a9",
+          "source_rows": 8,
+          "started_at": "2026-11-08T01:42:37.475702+00:00",
+          "status": "success",
+          "valid_events": 5
+        }
+      ],
+      "checkpoints_before": [
+        {
+          "active_before": 0,
+          "active_orders": 3,
+          "batch_id": "001_initial",
+          "completed_at": "2026-11-08T01:13:51.700024+00:00",
+          "duration_seconds": 47.904,
+          "events_after": 6,
+          "events_before": 0,
+          "failure_reason": "",
+          "gold_order_count": 3,
+          "gold_revenue": "1758.00",
+          "gold_rows": 3,
+          "input_fingerprint": "6c3694b1e62d538339b179ab95eb96270a9a9b67d41150f53db01cb3e747ea27",
+          "max_event_time": "2026-11-02 10:00:00",
+          "orders_after": 4,
+          "orders_before": 0,
+          "quarantined_rows": 4,
+          "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+          "run_id": "0116022f-29ac-4542-93f3-09139108c779",
+          "source_rows": 10,
+          "started_at": "2026-11-08T01:13:03.795678+00:00",
+          "status": "success",
+          "valid_events": 6
+        },
+        {
+          "active_before": 3,
+          "active_orders": 3,
+          "batch_id": "002_changes",
+          "completed_at": "2026-11-08T01:43:30.725948+00:00",
+          "duration_seconds": 53.25,
+          "events_after": 11,
+          "events_before": 6,
+          "failure_reason": "",
+          "gold_order_count": 3,
+          "gold_revenue": "3117.00",
+          "gold_rows": 3,
+          "input_fingerprint": "fee2cb49916cc432d12706de6d9ab259eb51922724264153a258d800ec325047",
+          "max_event_time": "2026-11-03 08:20:00",
+          "orders_after": 5,
+          "orders_before": 4,
+          "quarantined_rows": 3,
+          "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+          "run_id": "097b3035-5afe-412e-af5b-bb86ae61b4a9",
+          "source_rows": 8,
+          "started_at": "2026-11-08T01:42:37.475702+00:00",
+          "status": "success",
+          "valid_events": 5
+        }
+      ],
+      "checks": {
+        "active_orders_unchanged": true,
+        "all_current_rows_unchanged": true,
+        "all_delta_versions_unchanged": true,
+        "all_historical_versions_unchanged": true,
+        "all_row_counts_unchanged": true,
+        "audit_rows_and_attempts_unchanged": true,
+        "exactly_two_success_checkpoints": true,
+        "gold_revenue_unchanged": true,
+        "one_success_checkpoint_per_batch": true,
+        "returns_already_processed": true,
+        "returns_original_committed_report": true
+      },
+      "delta_version": "unavailable",
+      "gold_revenue": "3117.00",
+      "historical_row_sha256_after": {
+        "audit/runs": {
+          "0": "b41025ca17527818588dd5d05982cf33317e81797bd84f95ceb7d8b216f6a09b",
+          "1": "864d77cd733a01b412e586f2a9f6d733b4b8434b9099bb0a5699d579fdaf3a85",
+          "2": "61056f345523841548bb4863f77189c58beb2acce5cc422447c9f78140ddc608",
+          "3": "2eba51af790397a1c3d2d8ab8970ec15f4d15fcead50172f6a15530e73688a8e"
+        },
+        "bronze/customers": {
+          "0": "09000ea33c2c3a3b54868fda930d580a53be7433da100509879097718377ed56",
+          "1": "6f131fdf002a4280845abc418fb7197004b06a0e8e5586cdd8a18b3f5c361dda"
+        },
+        "bronze/orders": {
+          "0": "8cf9f451ceef5716dc0672ffbca2276d0f527cef8f7fef3dffeb8b05878b39e6",
+          "1": "f51b25a9b6734b0c503f6fc882749232eac7fe840ca100467afce6d5ba86384f"
+        },
+        "bronze/products": {
+          "0": "de943c1b2e4967c503c64917a26bfd4bc8e6e638451f984e50b3278ace894ae7",
+          "1": "27351349c661dd1af2e5c841090309ec92303dbebe5cb637442bc5389bba5da5"
+        },
+        "gold/daily_sales": {
+          "0": "ef8dc6fc98a31bd727557bf8d6f80fe74dae4215b185dfd9b725b61a537288f3",
+          "1": "50c746c0c7a68487d961071888ddb7588ee327ec56f3475f3a0494c8bf853262"
+        },
+        "quarantine/orders": {
+          "0": "78c525aa8913d67375ecee623b905502b1c803be5bb30d0c5cc54fa7dcbc78ce",
+          "1": "bde541c11d8fdda27a3ade92e8c7cfec7109ef2d4b3237cf0e216a7cf266588a"
+        },
+        "silver/current_orders": {
+          "0": "efd45972cf16ac0d2b9397d96655d5e0f05b4dfae81b19cadd146bff90e49bb0",
+          "1": "665d7b1ba3401553161362d390b5bc5d29d3927c926ec5d78a230e5f77ae0fc5"
+        },
+        "silver/order_events": {
+          "0": "a74e51fd19d3addcd4f77c1d532b8586f31b5ab8cb5114d0f7643a4dd5fbd65e",
+          "1": "a192794f60dc67c2c4540cea51ff9994d24a98c6c87932964324fb9f10cbb3bc"
+        }
+      },
+      "historical_row_sha256_before": {
+        "audit/runs": {
+          "0": "b41025ca17527818588dd5d05982cf33317e81797bd84f95ceb7d8b216f6a09b",
+          "1": "864d77cd733a01b412e586f2a9f6d733b4b8434b9099bb0a5699d579fdaf3a85",
+          "2": "61056f345523841548bb4863f77189c58beb2acce5cc422447c9f78140ddc608",
+          "3": "2eba51af790397a1c3d2d8ab8970ec15f4d15fcead50172f6a15530e73688a8e"
+        },
+        "bronze/customers": {
+          "0": "09000ea33c2c3a3b54868fda930d580a53be7433da100509879097718377ed56",
+          "1": "6f131fdf002a4280845abc418fb7197004b06a0e8e5586cdd8a18b3f5c361dda"
+        },
+        "bronze/orders": {
+          "0": "8cf9f451ceef5716dc0672ffbca2276d0f527cef8f7fef3dffeb8b05878b39e6",
+          "1": "f51b25a9b6734b0c503f6fc882749232eac7fe840ca100467afce6d5ba86384f"
+        },
+        "bronze/products": {
+          "0": "de943c1b2e4967c503c64917a26bfd4bc8e6e638451f984e50b3278ace894ae7",
+          "1": "27351349c661dd1af2e5c841090309ec92303dbebe5cb637442bc5389bba5da5"
+        },
+        "gold/daily_sales": {
+          "0": "ef8dc6fc98a31bd727557bf8d6f80fe74dae4215b185dfd9b725b61a537288f3",
+          "1": "50c746c0c7a68487d961071888ddb7588ee327ec56f3475f3a0494c8bf853262"
+        },
+        "quarantine/orders": {
+          "0": "78c525aa8913d67375ecee623b905502b1c803be5bb30d0c5cc54fa7dcbc78ce",
+          "1": "bde541c11d8fdda27a3ade92e8c7cfec7109ef2d4b3237cf0e216a7cf266588a"
+        },
+        "silver/current_orders": {
+          "0": "efd45972cf16ac0d2b9397d96655d5e0f05b4dfae81b19cadd146bff90e49bb0",
+          "1": "665d7b1ba3401553161362d390b5bc5d29d3927c926ec5d78a230e5f77ae0fc5"
+        },
+        "silver/order_events": {
+          "0": "a74e51fd19d3addcd4f77c1d532b8586f31b5ab8cb5114d0f7643a4dd5fbd65e",
+          "1": "a192794f60dc67c2c4540cea51ff9994d24a98c6c87932964324fb9f10cbb3bc"
+        }
+      },
+      "input_sha256": {
+        "customers.csv": "596b8da757582bd5ab8e69b223f3479570c33db5ad1f5bc42c874fe6516546aa",
+        "orders.csv": "64e727bd50182b839ddfa74ab52894ebfcf4c7f62b212289760d326c3a535be7",
+        "products.csv": "7448bd8827b429500648d23d14f5ffffee70af2c20f6c05c2173cfc85ec90214"
+      },
+      "mode": "one_approved_idempotency_replay",
+      "mount_paths": {
+        "output": "/lakehouse/default/Files/dataops/lakehouse",
+        "source": "/lakehouse/default/Files/dataops/source/002_changes"
+      },
+      "pipeline_wall_seconds": 2.452,
+      "preconditions_verified": true,
+      "python_version": "3.13.11",
+      "spark_version": "4.1.1.5.5.20260929.238183312",
+      "verification_passed": true
+    },
+    "independent_storage_verification": {
+      "tables": {
+        "bronze/orders": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        },
+        "bronze/customers": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        },
+        "bronze/products": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        },
+        "silver/order_events": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        },
+        "silver/current_orders": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": null
+        },
+        "quarantine/orders": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        },
+        "gold/daily_sales": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        },
+        "audit/runs": {
+          "version_unchanged": true,
+          "row_count_unchanged": true,
+          "all_retained_file_bytes_unchanged": true,
+          "decoded_rows_unchanged": true
+        }
+      },
+      "audit_rows_unchanged": true,
+      "source_sha256_unchanged": true,
+      "gold_revenue": "3117.00",
+      "verification_passed": true
+    },
+    "table_comparison": {
+      "bronze/orders": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 18,
+        "rows_after": 18,
+        "retained_files_before": 6,
+        "retained_files_after": 6,
+        "manifest_sha256_before": "40e704aa7557a8828e95feb4ed74e3e119cb48b93cb199abb77983d896e3fb35",
+        "manifest_sha256_after": "40e704aa7557a8828e95feb4ed74e3e119cb48b93cb199abb77983d896e3fb35",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "bronze/customers": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 6,
+        "rows_after": 6,
+        "retained_files_before": 6,
+        "retained_files_after": 6,
+        "manifest_sha256_before": "fcd3337a0d0ff7a4a181214ae7dd865e06dd9e1df35895060085418218cfa481",
+        "manifest_sha256_after": "fcd3337a0d0ff7a4a181214ae7dd865e06dd9e1df35895060085418218cfa481",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "bronze/products": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 6,
+        "rows_after": 6,
+        "retained_files_before": 6,
+        "retained_files_after": 6,
+        "manifest_sha256_before": "7af44531abb45740ce6e6608d66aaeca093a432417eb27298d8ab26e2e40f445",
+        "manifest_sha256_after": "7af44531abb45740ce6e6608d66aaeca093a432417eb27298d8ab26e2e40f445",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "silver/order_events": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 11,
+        "rows_after": 11,
+        "retained_files_before": 17,
+        "retained_files_after": 17,
+        "manifest_sha256_before": "12714f6375ec10e066b1093f6a7c782326d6af9ea96611cb94edd5a6e3eb1800",
+        "manifest_sha256_after": "12714f6375ec10e066b1093f6a7c782326d6af9ea96611cb94edd5a6e3eb1800",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "silver/current_orders": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 5,
+        "rows_after": 5,
+        "retained_files_before": 7,
+        "retained_files_after": 7,
+        "manifest_sha256_before": "a7a71affefe503071547e491c2899b7c8b8ab9c7c8b1b548fba61545a687c9f0",
+        "manifest_sha256_after": "a7a71affefe503071547e491c2899b7c8b8ab9c7c8b1b548fba61545a687c9f0",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "quarantine/orders": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 7,
+        "rows_after": 7,
+        "retained_files_before": 6,
+        "retained_files_after": 6,
+        "manifest_sha256_before": "00554c3175d18b8751ef106bd91f4bd8786b44631d56ca4be41f6031f18b59df",
+        "manifest_sha256_after": "00554c3175d18b8751ef106bd91f4bd8786b44631d56ca4be41f6031f18b59df",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "gold/daily_sales": {
+        "version_before": 1,
+        "version_after": 1,
+        "rows_before": 3,
+        "rows_after": 3,
+        "retained_files_before": 10,
+        "retained_files_after": 10,
+        "manifest_sha256_before": "cd7a5dc926945fd8a11b42ea47821004c214c52b69788eee6147b963b826ba24",
+        "manifest_sha256_after": "cd7a5dc926945fd8a11b42ea47821004c214c52b69788eee6147b963b826ba24",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      },
+      "audit/runs": {
+        "version_before": 3,
+        "version_after": 3,
+        "rows_before": 2,
+        "rows_after": 2,
+        "retained_files_before": 18,
+        "retained_files_after": 18,
+        "manifest_sha256_before": "9d83879102c8fb5c054d121d8607eba88023dd20da401b38bf2f393467a9859a",
+        "manifest_sha256_after": "9d83879102c8fb5c054d121d8607eba88023dd20da401b38bf2f393467a9859a",
+        "all_file_bytes_unchanged": true,
+        "native_row_fingerprint_unchanged": true
+      }
+    },
+    "audit_rows_before": 2,
+    "audit_rows_after": 2,
+    "success_checkpoints_before": 2,
+    "success_checkpoints_after": 2,
+    "gold_revenue_before": "3117.00",
+    "gold_revenue_after": "3117.00",
+    "verification_method": "Native Fabric Spark compared all eight current Delta tables and every retained historical version before and after the replay. Independent fresh OneLake reads compared every retained file name, size and SHA-256 checksum, including Delta logs, data files and deletion vectors, plus logical row counts, audit records, Gold rows and source checksums.",
+    "deletion_vector_note": "The direct reader accounts for active deletion-vector cardinalities. Exact current Silver rows are validated by native Spark; the independent check verifies the entire retained data and deletion-vector files are byte-identical.",
+    "timing_note": "The replay pipeline wall time measures this invocation. The returned batch report intentionally retains the original CDC run ID, completion time and duration; it is not a new audit attempt.",
+    "errors": [],
+    "verification_passed": true
   }
 }

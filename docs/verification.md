@@ -6,9 +6,10 @@ these small-batch results are not a production throughput benchmark.
 
 ## Current cloud-deployment follow-up
 
-**PASS for Fabric batches `001_initial` and `002_changes`; batch
-`003_schema_addition` and recovery remain pending approval.** The published
-`agentic-dataops 0.1.0` wheel ran once per approved batch in
+**PASS for Fabric batches `001_initial`, `002_changes`, and the single approved
+idempotency replay of `002_changes`; batch `003_schema_addition` and recovery
+remain pending approval.** The published `agentic-dataops 0.1.0` wheel executed
+the two input batches and one replay in
 `AgenticDataOps_Phase1_Run`, explicitly attached to `AgenticDataOps_Environment`
 and `AgenticDataOps_Lakehouse` in `Fabric Lakehouse Platform`. Runtime 2.0 reported
 Spark `4.1.1.5.5.20260929.238183312` and Python `3.13.11`. Delta Python distribution
@@ -107,6 +108,46 @@ No execution errors or metric discrepancies occurred. No batch 003 or recovery
 test has been run. Source path:
 `/lakehouse/default/Files/dataops/source/002_changes`; output root remains
 `/lakehouse/default/Files/dataops/lakehouse` in `AgenticDataOps_Lakehouse`.
+
+### Idempotency replay: `002_changes`
+
+The exact completed batch ID and unchanged source CSV bytes were replayed once
+using the existing published package and attached resources. Before submission,
+both checkpoints were successful, the audit contained two rows, no active or
+unfinished writer was present, and Gold revenue was `3117.00`. All eight live
+table versions, row counts and retained output-file hashes were recorded.
+
+- Fabric replay run ID: `16e2ccdb-3231-403f-89be-aa005c22b565`; status `Completed`.
+- Pipeline result: **`already_processed`**.
+- Total Fabric duration: **222.955 s**; replay pipeline call: **2.452 s**.
+- Returned application run ID: `097b3035-5afe-412e-af5b-bb86ae61b4a9`, the original
+  CDC run. Its returned duration of `53.250 s` belongs to that original run;
+  it is not the replay invocation time or a new audit attempt.
+
+| Output | Rows before → after | Delta version before → after |
+| --- | --- | --- |
+| `bronze/orders` | 18 → 18 | 1 → 1 |
+| `bronze/customers` | 6 → 6 | 1 → 1 |
+| `bronze/products` | 6 → 6 | 1 → 1 |
+| `silver/order_events` | 11 → 11 | 1 → 1 |
+| `silver/current_orders` | 5 → 5 | 1 → 1 |
+| `quarantine/orders` | 7 → 7 | 1 → 1 |
+| `gold/daily_sales` | 3 → 3 | 1 → 1 |
+| `audit/runs` | 2 → 2 | 3 → 3 |
+
+Native Spark compared current row fingerprints and every retained historical
+Delta snapshot before and after replay. All were unchanged. Independent fresh
+OneLake reads compared all 76 retained files, including data, transaction logs,
+and deletion vectors: names, sizes and SHA-256 checksums were identical. Source
+CSV checksums also remained unchanged. There was no duplicate audit attempt or
+additional checkpoint; both original success rows remained intact. Gold stayed
+at `3117.00`, with three active orders.
+
+The original CDC evidence is preserved in
+[fabric-002-changes.json](evidence/fabric-002-changes.json); replay evidence is
+appended under `idempotency_replay`. The initial evidence file is unchanged.
+No source upload, package change, automatic resubmission, schema-evolution batch,
+or deliberate failure/recovery test occurred during replay verification.
 
 ## Local runtime compatibility evidence
 
@@ -217,7 +258,7 @@ The existing PR remains open; no duplicate PR or merge was created.
 | --- | --- |
 | Bronze, Silver, quarantine and Gold | Verified locally with real Delta and the original Parquet demo |
 | Incremental ingestion and CDC MERGE | Verified; only the submitted source batch is ingested |
-| Idempotent reruns | Verified for same IDs and events delivered under new IDs |
+| Idempotent reruns | Exact same-ID replay verified in Fabric; alternate-ID delivery tested locally |
 | Invalid rows isolated with reasons | Verified, including original raw values |
 | Predictable schema failures and additions | Verified with fixtures and real Delta evolution |
 | Failure/recovery and durable checkpoints | Verified, including a new Python/Spark process |
@@ -225,14 +266,15 @@ The existing PR remains open; no duplicate PR or merge was created.
 | Local tests | Both current runtime profiles passed 41 tests; earlier 31-test evidence is historical |
 | GitHub Actions | Both implementation-commit runs passed; linked evidence above |
 | Reproducible documentation/demo | Commands executed locally; recorded counts above |
-| Fabric | Initial batch and incremental CDC executed and reconciled; batch 003 and recovery require approval |
+| Fabric | Initial batch, incremental CDC and unchanged replay verified; batch 003 and recovery require approval |
 
 ## Fabric execution scope and limits
 
-Authentication, the published application package, initial execution and
-incremental CDC are verified in the existing FTL4 trial capacity. This is evidence
-for `001_initial` and `002_changes` only. Batch `003_schema_addition`, replay,
-schema evolution, and failure/recovery have not yet been executed in Fabric. Their local evidence
+Authentication, the published application package, initial execution, incremental
+CDC and one exact-batch replay are verified in the existing FTL4 trial capacity.
+This is evidence for `001_initial` and `002_changes` only. Batch
+`003_schema_addition`, schema evolution, and failure/recovery have not yet been
+executed in Fabric. Their local evidence
 does not establish those remaining cloud milestones. Wait for explicit approval
 before running another batch or recovery attempt. No capacity, billing, role,
 or workspace-wide runtime setting was changed.

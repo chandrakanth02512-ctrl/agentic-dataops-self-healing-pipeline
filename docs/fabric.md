@@ -1,15 +1,18 @@
 # Microsoft Fabric deployment preparation
 
-**Status: application package, initial batch and Fabric CDC verified.** The existing
+**Status: application package, initial batch, Fabric CDC and idempotency verified.** The existing
 workspace **Fabric Lakehouse Platform**, Lakehouse **AgenticDataOps_Lakehouse**,
 Environment **AgenticDataOps_Environment**, and Entra application
 **AgenticDataOps_Codex** were used for the approved deployment. The published
 `agentic-dataops 0.1.0` wheel and fictional batches `001_initial` and `002_changes`
-passed actual Runtime 2.0 execution and persisted-output reconciliation. See
+passed actual Runtime 2.0 execution and persisted-output reconciliation. One
+approved replay of `002_changes` returned `already_processed`, with all eight
+Delta versions, row counts, audit checkpoints and retained file bytes unchanged. See
 [the recorded results](verification.md), [initial evidence](evidence/fabric-001-initial.json),
 and [CDC evidence](evidence/fabric-002-changes.json).
 
-Only `001_initial` and `002_changes` have been executed, once each. Batch
+Only `001_initial` and `002_changes` have been processed, plus one verified
+idempotency replay of `002_changes`. Batch
 `003_schema_addition` and recovery tests require the user's next approval.
 The instructions below describe the broader workflow;
 they do not authorize additional execution. Never modify EnterpriseSalesLakehouse
