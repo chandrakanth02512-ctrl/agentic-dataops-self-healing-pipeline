@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-dataops"
+version = "0.1.0"
+description = "A data reliability pipeline with human-approved recovery"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+local = ["pyspark==4.0.5", "delta-spark==4.0.0"]
+dev = ["pytest>=8,<10", "pyspark==4.0.5", "delta-spark==4.0.0"]
+fabric-test = ["pytest>=8,<10", "pyspark==4.1.1", "delta-spark==4.2.0"]
+
+[project.scripts]
+dataops-pipeline = "agentic_dataops.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+agentic_dataops = ["sql/*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

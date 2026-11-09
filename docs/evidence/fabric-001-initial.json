@@ -1,0 +1,309 @@
+{
+  "scope": "One execution of fictional batch 001_initial only; no later batches or recovery attempts.",
+  "source_branch": "feature/phase1-spark-pipeline",
+  "source_commit": "fd670e291a2e09e6466e874ca124c760275f8b38",
+  "workspace": "Fabric Lakehouse Platform",
+  "lakehouse": "AgenticDataOps_Lakehouse",
+  "environment": "AgenticDataOps_Environment",
+  "wheel": "agentic_dataops-0.1.0-py3-none-any.whl",
+  "notebook_name": "AgenticDataOps_Phase1_Run",
+  "notebook_id": "7dbe4ee8-eb8a-4aa8-81e9-612272d041e7",
+  "fabric_run_id": "7c0f15b0-77dc-468f-b6ab-ee49b97b11c4",
+  "fabric_execution_status": "Completed",
+  "timestamps_utc": {
+    "startTimeUtc": "2026-11-08T01:10:05.0193092",
+    "endTimeUtc": "2026-11-08T01:14:17.9588938"
+  },
+  "fabric_duration_seconds": 252.94,
+  "runtime": "2.0",
+  "requested_compute": {
+    "driver_cores": 4,
+    "driver_memory": "28g",
+    "executor_cores": 4,
+    "executor_memory": "28g",
+    "executors": 1,
+    "dynamic_allocation": false
+  },
+  "paths": {
+    "source": "/lakehouse/default/Files/dataops/source/001_initial",
+    "output": "/lakehouse/default/Files/dataops/lakehouse"
+  },
+  "input_files": {
+    "customers.csv": {
+      "sha256": "596b8da757582bd5ab8e69b223f3479570c33db5ad1f5bc42c874fe6516546aa",
+      "bytes": 89,
+      "rows": 3
+    },
+    "orders.csv": {
+      "sha256": "6c40386f1d7f30d27ec5c74c5766aad1336ac6639da714331f6a889cf3836d56",
+      "bytes": 752,
+      "rows": 10
+    },
+    "products.csv": {
+      "sha256": "7448bd8827b429500648d23d14f5ffffee70af2c20f6c05c2173cfc85ec90214",
+      "bytes": 122,
+      "rows": 3
+    }
+  },
+  "pre_write_inspection": {
+    "source": {
+      "exists": false,
+      "entries": []
+    },
+    "output": {
+      "exists": false,
+      "entries": []
+    }
+  },
+  "timing_note": "Fabric duration includes startup and notebook read-back. pipeline_wall_seconds includes the success checkpoint write. batch_report.duration_seconds is measured before that final checkpoint commit.",
+  "verification": {
+    "actual": {
+      "active_orders": 3,
+      "gold_revenue": "1758.00",
+      "input_orders": 10,
+      "rejected_orders": 4,
+      "valid_events": 6
+    },
+    "application_version": "0.1.0",
+    "attachments_verified": true,
+    "audit_rows": [
+      {
+        "active_before": 0,
+        "active_orders": 3,
+        "batch_id": "001_initial",
+        "completed_at": "2026-11-08T01:13:51.700024+00:00",
+        "duration_seconds": 47.904,
+        "events_after": 6,
+        "events_before": 0,
+        "failure_reason": "",
+        "gold_order_count": 3,
+        "gold_revenue": "1758.00",
+        "gold_rows": 3,
+        "input_fingerprint": "6c3694b1e62d538339b179ab95eb96270a9a9b67d41150f53db01cb3e747ea27",
+        "max_event_time": "2026-11-02 10:00:00",
+        "orders_after": 4,
+        "orders_before": 0,
+        "quarantined_rows": 4,
+        "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+        "run_id": "0116022f-29ac-4542-93f3-09139108c779",
+        "source_rows": 10,
+        "started_at": "2026-11-08T01:13:03.795678+00:00",
+        "status": "success",
+        "valid_events": 6
+      }
+    ],
+    "batch_id": "001_initial",
+    "batch_report": {
+      "active_before": 0,
+      "active_orders": 3,
+      "batch_id": "001_initial",
+      "completed_at": "2026-11-08T01:13:51.700024+00:00",
+      "duration_seconds": 47.904,
+      "events_after": 6,
+      "events_before": 0,
+      "failure_reason": "",
+      "gold_order_count": 3,
+      "gold_revenue": "1758.00",
+      "gold_rows": 3,
+      "input_fingerprint": "6c3694b1e62d538339b179ab95eb96270a9a9b67d41150f53db01cb3e747ea27",
+      "max_event_time": "2026-11-02 10:00:00",
+      "orders_after": 4,
+      "orders_before": 0,
+      "quarantined_rows": 4,
+      "reference_fingerprint": "78b3f6123443ffbaece60420ec5718eb9c53aafa07e2d944e21d48dde157cf03",
+      "run_id": "0116022f-29ac-4542-93f3-09139108c779",
+      "source_rows": 10,
+      "started_at": "2026-11-08T01:13:03.795678+00:00",
+      "status": "success",
+      "valid_events": 6
+    },
+    "delta_version": "unavailable",
+    "discrepancies": {},
+    "expected": {
+      "active_orders": 3,
+      "gold_revenue": "1758.00",
+      "input_orders": 10,
+      "rejected_orders": 4,
+      "valid_events": 6
+    },
+    "input_sha256": {
+      "customers.csv": "596b8da757582bd5ab8e69b223f3479570c33db5ad1f5bc42c874fe6516546aa",
+      "orders.csv": "6c40386f1d7f30d27ec5c74c5766aad1336ac6639da714331f6a889cf3836d56",
+      "products.csv": "7448bd8827b429500648d23d14f5ffffee70af2c20f6c05c2173cfc85ec90214"
+    },
+    "mount_paths": {
+      "output": "/lakehouse/default/Files/dataops/lakehouse",
+      "source": "/lakehouse/default/Files/dataops/source/001_initial"
+    },
+    "output_empty_before_execution": true,
+    "persisted_outputs": {
+      "audit/runs": {
+        "delta_version": 1,
+        "is_delta": true,
+        "rows": 1
+      },
+      "bronze/customers": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 3
+      },
+      "bronze/orders": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 10
+      },
+      "bronze/products": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 3
+      },
+      "gold/daily_sales": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 3
+      },
+      "quarantine/orders": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 4
+      },
+      "silver/current_orders": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 4
+      },
+      "silver/order_events": {
+        "delta_version": 0,
+        "is_delta": true,
+        "rows": 6
+      }
+    },
+    "pipeline_wall_seconds": 53.097,
+    "python_version": "3.13.11",
+    "quarantine_reasons": {
+      "duplicate_event": 1,
+      "invalid_price": 1,
+      "invalid_quantity": 1,
+      "unknown_customer": 1
+    },
+    "reconciliation": {
+      "bronze_reference_counts": true,
+      "checkpoint_matches_returned_report": true,
+      "gold_orders_equal_active_silver": true,
+      "gold_revenue_equals_active_silver": true,
+      "input_equals_valid_plus_rejected": true,
+      "one_success_checkpoint": true,
+      "only_approved_batch": true,
+      "silver_business_keys_unique": true
+    },
+    "spark_version": "4.1.1.5.5.20260929.238183312",
+    "success_checkpoint_count": 1,
+    "verification_errors": [],
+    "verification_passed": true
+  },
+  "independent_onelake_delta_log_inspection": {
+    "bronze/orders": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 10,
+      "version_matches_notebook": true
+    },
+    "bronze/customers": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 3,
+      "version_matches_notebook": true
+    },
+    "bronze/products": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 3,
+      "version_matches_notebook": true
+    },
+    "silver/order_events": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 6,
+      "version_matches_notebook": true
+    },
+    "silver/current_orders": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 4,
+      "version_matches_notebook": true
+    },
+    "quarantine/orders": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 4,
+      "version_matches_notebook": true
+    },
+    "gold/daily_sales": {
+      "delta_log_exists": true,
+      "commit_count": 1,
+      "latest_version": 0,
+      "operation": "WRITE",
+      "latest_commit_added_rows": 3,
+      "version_matches_notebook": true
+    },
+    "audit/runs": {
+      "delta_log_exists": true,
+      "commit_count": 2,
+      "latest_version": 1,
+      "operation": "MERGE",
+      "latest_commit_added_rows": 1,
+      "checkpoint_statistics": [
+        {
+          "numRecords": 1,
+          "minValues": {
+            "run_id": "0116022f-29ac-4542-93f3-09139108",
+            "batch_id": "001_initial",
+            "status": "success",
+            "source_rows": 10,
+            "valid_events": 6,
+            "quarantined_rows": 4,
+            "active_orders": 3,
+            "gold_revenue": "1758.00"
+          },
+          "maxValues": {
+            "run_id": "0116022f-29ac-4542-93f3-09139108\u007f",
+            "batch_id": "001_initial",
+            "status": "success",
+            "source_rows": 10,
+            "valid_events": 6,
+            "quarantined_rows": 4,
+            "active_orders": 3,
+            "gold_revenue": "1758.00"
+          }
+        }
+      ],
+      "version_matches_notebook": true
+    }
+  },
+  "verification_method": "After the pipeline returned, a fresh Spark SQL session read all eight committed Delta paths. After notebook completion, read-only OneLake calls checked each latest Delta commit and the final audit commit statistics.",
+  "statistics_note": "Delta string min/max statistics can be truncated; the full audit row read by Spark supplies the complete application run ID.",
+  "errors": [],
+  "restrictions_observed": {
+    "single_submission": true,
+    "preflight_notebook_unchanged": true,
+    "published_wheel_unchanged": true,
+    "no_managed_table_registration": true,
+    "no_other_batches": true,
+    "no_recovery_run": true,
+    "no_workspace_settings_changes": true,
+    "no_enterprise_sales_access": true,
+    "pr_1_not_merged": true
+  }
+}

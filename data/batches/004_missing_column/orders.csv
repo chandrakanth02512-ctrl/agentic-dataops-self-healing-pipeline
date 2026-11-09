@@ -1,0 +1,2 @@
+order_id,client_id,product_id,quantity,unit_price,order_status,order_date,operation,event_time
+O001,C001,P1001,3,699.00,Updated,2026-11-01,U,2026-11-03T08:00:00

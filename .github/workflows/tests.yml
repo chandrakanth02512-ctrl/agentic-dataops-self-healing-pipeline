@@ -1,0 +1,64 @@
+name: Python and Spark tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.runtime }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: local-spark-4.0
+            python: "3.12"
+            requirements: requirements-dev.lock
+          - runtime: fabric-2.0-compatibility-local
+            python: "3.13"
+            requirements: requirements-fabric.lock
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: ${{ matrix.requirements }}
+      - name: Set up Java for Spark
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install locked dependencies
+        run: |
+          python -m pip install -r ${{ matrix.requirements }}
+          python -m pip install --no-deps --no-build-isolation -e .
+          python scripts/setup_local_delta.py
+      - name: Run all tests, including real Delta MERGE
+        run: python -m pytest -q --junitxml=build/test-results.xml
+      - name: Build wheel and check Fabric-safe packaging
+        run: |
+          python -m pip wheel --no-deps --no-build-isolation . -w build/dist
+          python - <<'PY'
+          import glob, zipfile
+          from email.parser import Parser
+          with zipfile.ZipFile(glob.glob('build/dist/*.whl')[0]) as wheel:
+              assert 'agentic_dataops/sql/daily_sales.sql' in wheel.namelist()
+              path = next(name for name in wheel.namelist() if name.endswith('.dist-info/METADATA'))
+              metadata = Parser().parsestr(wheel.read(path).decode())
+              for requirement in metadata.get_all('Requires-Dist', []):
+                  if requirement.lower().replace('_', '-').startswith(('pyspark', 'delta-spark')):
+                      assert 'extra ==' in requirement, 'The base wheel must not replace Fabric runtime packages'
+          PY
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.runtime }}
+          path: build/test-results.xml
