@@ -1,19 +1,24 @@
-# Microsoft Fabric deployment preparation
+# Microsoft Fabric deployment and verification
 
-**Status: application package, initial batch, Fabric CDC and idempotency verified.** The existing
+**Status: Phase 1 verified through the project notebook.** The existing
 workspace **Fabric Lakehouse Platform**, Lakehouse **AgenticDataOps_Lakehouse**,
-Environment **AgenticDataOps_Environment**, and Entra application
-**AgenticDataOps_Codex** were used for the approved deployment. The published
-`agentic-dataops 0.1.0` wheel and fictional batches `001_initial` and `002_changes`
-passed actual Runtime 2.0 execution and persisted-output reconciliation. One
-approved replay of `002_changes` returned `already_processed`, with all eight
-Delta versions, row counts, audit checkpoints and retained file bytes unchanged. See
-[the recorded results](verification.md), [initial evidence](evidence/fabric-001-initial.json),
-and [CDC evidence](evidence/fabric-002-changes.json).
+Environment **AgenticDataOps_Environment**, and published `agentic-dataops 0.1.0`
+wheel passed initial ingestion, CDC, unchanged replay, additive schema evolution,
+and a controlled failure/recovery pair on native Runtime 2.0.
 
-Only `001_initial` and `002_changes` have been processed, plus one verified
-idempotency replay of `002_changes`. Batch
-`003_schema_addition` and recovery tests require the user's next approval.
+`001_initial` and `002_changes` succeeded once each; the single 002 replay returned
+`already_processed` without changing any of the eight Delta outputs or 76 retained
+files. For `003_schema_addition`, one intentional fail-after-Silver run failed as
+expected, leaving partial Bronze/Silver writes and Gold at `3117.00`. One recovery
+run then succeeded: 1 input, 1 valid, 0 rejected, 4 active orders, revenue `3357.00`.
+The new `sales_channel` field survived. Exactly three successful batch checkpoints
+and one retained failed attempt are present, with prior history preserved.
+
+See [verified results](verification.md), [initial evidence](evidence/fabric-001-initial.json),
+[CDC/replay evidence](evidence/fabric-002-changes.json), and
+[schema/recovery evidence](evidence/fabric-003-schema-recovery.json).
+All approved Phase 1 executions are complete; additional execution requires new
+approval. The alternate script entry point remains unsupported as described below.
 The instructions below describe the broader workflow;
 they do not authorize additional execution. Never modify EnterpriseSalesLakehouse
 or workspace-wide settings. Use [the secure connection instructions](fabric-connection.md)
@@ -63,10 +68,19 @@ without installing any local-runtime extras or replacing built-in packages.
 The wheel includes the SQL resource. The verified execution notebook calls
 `run_pipeline` with Fabric's existing `spark` object and explicit OneLake ABFS
 paths. Environment publication, runtime, notebook attachments and execution were
-verified. The alternate `fabric/run_batch.py` entry point still requires review:
-its runtime guard looks up `delta-spark` distribution metadata, which was
-unavailable in the managed runtime. Do not install replacement runtime packages
-or change workspace-wide settings as a workaround.
+verified. Review confirmed an alternate-entry-point limitation: `fabric/run_batch.py` calls
+a guard that requires `delta-spark` distribution metadata. That metadata is absent
+in the managed runtime, and a local check reproduced `PackageNotFoundError` before
+pipeline execution. The guard and published wheel remain unchanged; this script
+is not claimed to work in Fabric. The verified project notebook uses the native
+Spark session directly. A future fix must obtain trustworthy native version
+information and separately approve any wheel publication. Do not install replacement
+runtime packages or change workspace-wide settings as a workaround.
+
+The failure/recovery evidence confirms per-table commits, not cross-table atomicity:
+Gold can be stale while Silver has partial new state. Keep exactly one writer per
+output root and require a success checkpoint with no pending batch before consuming
+results. The audit guard does not provide distributed locking.
 
 ## Files and execution
 

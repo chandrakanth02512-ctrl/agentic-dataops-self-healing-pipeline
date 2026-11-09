@@ -4,10 +4,15 @@ A code-first PySpark and Delta Lake pipeline for fictional e-commerce orders.
 This branch extends the original working Bronze/Silver/Gold demo. AI agents,
 LLMs, MCP, ML, human approvals and visual drag-and-drop ETL are later phases.
 
-**Implemented locally:** incremental Delta batches, real CDC MERGE, tombstones,
-replay-safe recovery, data quality/quarantine, schema handling, Spark SQL Gold,
-and audit/checkpoints. **Fabric execution is blocked and unverified.** See the
-[verification report](docs/verification.md) for measured results and CI status.
+**Phase 1 verified in Microsoft Fabric:** incremental Delta batches, CDC MERGE,
+tombstones, unchanged replay, data quality/quarantine, additive schema evolution,
+Spark SQL Gold, and intentional failure after Silver followed by controlled
+recovery. The dedicated project notebook uses native Runtime 2.0 and application
+v0.1.0. Final Gold revenue is **3357.00**, with **4 active orders** and **3 successful
+batch checkpoints**. See the [verification report](docs/verification.md) and
+[schema/recovery evidence](docs/evidence/fabric-003-schema-recovery.json).
+The alternate script entry point has a documented runtime metadata limitation;
+these results verify the project notebook path.
 
 ## Architecture
 
@@ -102,8 +107,8 @@ These are fictional demo amounts, not production performance or quality claims.
 
 [Fabric deployment instructions](docs/fabric.md) include the job entry point,
 configuration template, Runtime 2.0 compatibility requirement and evidence checklist.
-[Secure connection instructions](docs/fabric-connection.md) list the missing settings
-and network changes required before cloud authentication and deployment.
+[Secure connection instructions](docs/fabric-connection.md) describe the authentication
+and restricted-network setup used for the existing deployment.
 They write Delta paths in OneLake Files; managed table registration and SQL
 analytics endpoint discovery are not claimed. No chargeable service is created.
 

@@ -6,10 +6,10 @@ these small-batch results are not a production throughput benchmark.
 
 ## Current cloud-deployment follow-up
 
-**PASS for Fabric batches `001_initial`, `002_changes`, and the single approved
-idempotency replay of `002_changes`; batch `003_schema_addition` and recovery
-remain pending approval.** The published `agentic-dataops 0.1.0` wheel executed
-the two input batches and one replay in
+**PASS for the Phase 1 Fabric notebook path:** initial ingestion, incremental
+CDC, the unchanged idempotency replay, additive schema evolution, and intentional
+failure after Silver followed by controlled recovery. The published
+`agentic-dataops 0.1.0` wheel executed these bounded checks in
 `AgenticDataOps_Phase1_Run`, explicitly attached to `AgenticDataOps_Environment`
 and `AgenticDataOps_Lakehouse` in `Fabric Lakehouse Platform`. Runtime 2.0 reported
 Spark `4.1.1.5.5.20260929.238183312` and Python `3.13.11`. Delta Python distribution
@@ -104,8 +104,8 @@ deletion vector to mask two superseded rows; the independent reader accounts for
 that cardinality, while native Spark verifies the exact current-row selection.
 
 [Full CDC evidence, batch report, checksums, CDC checks and retention proof](evidence/fabric-002-changes.json).
-No execution errors or metric discrepancies occurred. No batch 003 or recovery
-test has been run. Source path:
+No execution errors or metric discrepancies occurred during the CDC stage. Batch
+003 and recovery were verified separately below. CDC source path:
 `/lakehouse/default/Files/dataops/source/002_changes`; output root remains
 `/lakehouse/default/Files/dataops/lakehouse` in `AgenticDataOps_Lakehouse`.
 
@@ -148,6 +148,88 @@ The original CDC evidence is preserved in
 appended under `idempotency_replay`. The initial evidence file is unchanged.
 No source upload, package change, automatic resubmission, schema-evolution batch,
 or deliberate failure/recovery test occurred during replay verification.
+
+### Schema evolution and controlled recovery: `003_schema_addition`
+
+**PASS.** The exact repository fixture bytes were uploaded once. After an
+interruption, saved state and fresh reads confirmed the upload and notebook update
+had completed and no execution had been submitted. The historical update-operation
+URL returned 404; the saved success record and exact live notebook definition
+confirmed its outcome. No upload or update was repeated.
+
+Before execution, all 76 retained files matched the verified replay baseline,
+both prior success checkpoints were intact, Gold was `3117.00`, and no active
+writer or prior 003 submission existed. The existing notebook kept its explicit
+Environment/Lakehouse attachments and used the unchanged v0.1.0 wheel, Runtime 2.0,
+and the same small single-executor configuration. Its unrelated cell was preserved.
+
+- Intentional failure: `0f1b904b-da68-4be4-a417-76ecd481e702`; Fabric status **`Failed`**;
+  duration **269.490 s**.
+- Expected application exception: `RuntimeError: Injected failure after silver`.
+  Bronze, quarantine and Silver writes persisted; Gold remained at `3117.00`.
+  Audit retained one failed 003 attempt and no 003 success checkpoint.
+  Fabric returned a generic statement-failure session-cancellation message;
+  the durable failed audit record established the exact application cause.
+- Recovery: `b2c908ea-7f34-4f73-933f-958a9119b462`; Fabric status **`Completed`**;
+  duration **334.219 s**; pipeline call
+  **51.875 s**.
+- Recovery used the same batch ID and source checksums, without failure injection,
+  only after the failed job terminated, independent output checks passed, and
+  fresh checks confirmed no active writer or pending submission.
+
+| Recovery metric | Expected | Actual |
+| --- | ---: | ---: |
+| Input | 1 | 1 |
+| Valid | 1 | 1 |
+| Rejected | 0 | 0 |
+| Active orders | 4 | 4 |
+| Gold revenue | 3357.00 | 3357.00 |
+| Successful batch checkpoints | 3 | 3 |
+
+The following transitions are baseline → failed attempt → recovered state:
+
+| Output | Logical rows | Delta versions |
+| --- | --- | --- |
+| `bronze/orders` | 18 → 19 → 19 | 1 → 2 → 3 |
+| `bronze/customers` | 6 → 9 → 9 | 1 → 2 → 3 |
+| `bronze/products` | 6 → 9 → 9 | 1 → 2 → 3 |
+| `silver/order_events` | 11 → 12 → 12 | 1 → 2 → 2 |
+| `silver/current_orders` | 5 → 6 → 6 | 1 → 2 → 2 |
+| `quarantine/orders` | 7 → 7 → 7 | 1 → 2 → 2 |
+| `gold/daily_sales` | 3 → 3 → 4 | 1 → 1 → 2 |
+| `audit/runs` | 2 → 3 → 4 | 3 → 5 → 7 |
+
+`O011` appears exactly once in current Silver with quantity `2`. Its
+`sales_channel = web` field survives in Bronze orders, Silver events and Silver
+current state. Event keys and current-state business keys remain unique. Audit
+contains four attempts: the original two successes, one expected 003 failure,
+and exactly one 003 success. Previous audit records are unchanged.
+
+A new native Spark SQL session read the committed recovery outputs. Version-pinned
+reads before and after recovery compared current rows and all pre-existing
+historical snapshots, including the partial failed state. Independent OneLake
+reads reconstructed Delta logs, schemas and logical row counts; read audit and
+Gold records; compared every retained filename, size and SHA-256; and rechecked
+all nine source files against repository bytes. All earlier retained files and
+historical snapshots were preserved. The independent reader accounts for deletion
+vector cardinalities; native Spark verifies exact rows in partially masked files.
+
+Complete retained manifests contain 76 files at baseline, 103 after failure and
+129 after recovery. Recovery left one additional empty, unreferenced Parquet file
+in each Silver directory. Independent reads confirmed both contain zero rows;
+neither belongs to the active Delta snapshot. Both were preserved without cleanup.
+Silver versions and logical row fingerprints stayed unchanged during recovery.
+
+This demonstrates **per-table Delta commits and controlled recovery**, not a
+cross-table atomic transaction. Partial writes existed after the intentional
+failure. One writer per output root remains mandatory; the audit guard is not a
+distributed lock. Readers must wait for a success checkpoint and no pending batch.
+
+[Machine-readable failure/recovery evidence, full manifests, schemas and audit records](evidence/fabric-003-schema-recovery.json).
+Six relevant existing local tests passed again (0 failures/errors/skips): schema
+and CDC, partial failure after Silver and recovery, and runtime profile checks.
+No package installation, wheel publication, prior Fabric batch rerun, workspace-wide
+change, unrelated data access, or automatic retry was performed.
 
 ## Local runtime compatibility evidence
 
@@ -260,24 +342,33 @@ The existing PR remains open; no duplicate PR or merge was created.
 | Incremental ingestion and CDC MERGE | Verified; only the submitted source batch is ingested |
 | Idempotent reruns | Exact same-ID replay verified in Fabric; alternate-ID delivery tested locally |
 | Invalid rows isolated with reasons | Verified, including original raw values |
-| Predictable schema failures and additions | Verified with fixtures and real Delta evolution |
-| Failure/recovery and durable checkpoints | Verified, including a new Python/Spark process |
+| Predictable schema failures and additions | Additive schema evolution verified in Fabric; required-field failures verified locally |
+| Failure/recovery and durable checkpoints | Intentional Silver failure and a separate recovery execution verified in Fabric |
 | SQL and PySpark together | Verified by Gold revenue and packaged-resource checks |
 | Local tests | Both current runtime profiles passed 41 tests; earlier 31-test evidence is historical |
 | GitHub Actions | Both implementation-commit runs passed; linked evidence above |
 | Reproducible documentation/demo | Commands executed locally; recorded counts above |
-| Fabric | Initial batch, incremental CDC and unchanged replay verified; batch 003 and recovery require approval |
+| Fabric | Initial ingestion, CDC, unchanged replay, additive schema and controlled recovery verified through the project notebook |
 
 ## Fabric execution scope and limits
 
-Authentication, the published application package, initial execution, incremental
-CDC and one exact-batch replay are verified in the existing FTL4 trial capacity.
-This is evidence for `001_initial` and `002_changes` only. Batch
-`003_schema_addition`, schema evolution, and failure/recovery have not yet been
-executed in Fabric. Their local evidence
-does not establish those remaining cloud milestones. Wait for explicit approval
-before running another batch or recovery attempt. No capacity, billing, role,
-or workspace-wide runtime setting was changed.
+Authentication, the published application package, batches `001_initial` and
+`002_changes`, one unchanged replay, and the single failure/recovery pair for
+`003_schema_addition` are verified in the existing FTL4 trial capacity. These
+meet the bounded Phase 1 acceptance criteria through `AgenticDataOps_Phase1_Run`.
+Further execution requires a new approval. No capacity, billing, role, environment
+library or workspace-wide runtime setting was changed.
+
+The alternate `fabric/run_batch.py` entry point is still unsupported with this
+unchanged wheel: `validate_fabric_runtime` requests `delta-spark` distribution
+metadata, which the managed session lacks. Local inspection reproduced
+`PackageNotFoundError` before pipeline execution. Guessing the Delta version or
+relaxing the guard would weaken validation, and changing local source would not
+repair the published v0.1.0 wheel. The guard remains unchanged and fails closed.
+This is an alternate-entry-point limitation, not a claim that it was executed or
+verified. The verified notebook uses Fabric's native session directly. A future
+entry-point change needs a trustworthy native-version check and separate approval
+for any new wheel publication; no runtime package override is an acceptable fix.
 
 The implementation intentionally requires one writer, immutable reference
 snapshots and source files no larger than 64 MiB. Gold is rebuilt from current
